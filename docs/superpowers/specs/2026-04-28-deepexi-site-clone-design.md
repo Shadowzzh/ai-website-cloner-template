@@ -11,9 +11,10 @@ Within the existing `ai-website-cloner-template` project, rebuild the Deepexi pu
 The implementation should prioritize visual parity with the live site while adapting a few user-specified interactions:
 
 - Only build the Chinese site
-- Language switcher remains visible, but clicking it shows `alert("暂无功能")`
-- `/activity` cards show `alert("暂无功能")`
-- `/industry-report` cards show `alert("暂无功能")`
+- Preserve the language switcher dropdown structure; selecting a locale item shows `alert("暂无功能")`
+- `/activity` cards show `alert("暂无功能")` when clicking any card area
+- `/industry-report` cards show `alert("暂无功能")` when clicking any card area
+- Preserve news-related visual entry points, but make them non-clickable
 - Do not implement `/news` or `/news-detail/*`
 
 ## Scope
@@ -45,6 +46,7 @@ The implementation should prioritize visual parity with the live site while adap
 
 - `/news`
 - `/news-detail/*`
+- Legacy FastData alias routes such as `/fastData`, `/product/fastData`, and `/product/fastdata`
 - English locale content
 - External live playback pages
 - PDF reading experience inside the site
@@ -57,6 +59,11 @@ The implementation should prioritize visual parity with the live site while adap
 - Target fidelity should be as close to 1:1 as practical
 - Activity and report cards should not navigate externally
 - Language switching should not change locale
+- Keep news-related entry points visible, but fully disabled
+- Treat `/product/deepexi` as the official Deepexi route
+- Treat `/fastAgi` as the official FastAGI route
+- Keep `/deepexi` and `/fastagi` as compatibility entry routes only
+- Do not support legacy FastData alias routes
 
 ## Constraints
 
@@ -164,7 +171,8 @@ Shared shell components are responsible for:
 - Mobile navigation drawer/menu
 - Footer
 - Skip link
-- Locale switch affordance
+- Locale switch affordance, including the visible dropdown panel structure
+- Disabled news entry presentation in header and footer
 - Shared alert behavior for unavailable actions
 
 The shell must not include page-specific layout assumptions beyond the sticky header and site-wide footer.
@@ -175,9 +183,9 @@ Each route gets a dedicated page module subtree. This keeps page-level fidelity 
 
 Examples:
 
-- `components/pages/home/*`
-- `components/pages/company/*`
-- `components/pages/product/deepexi/*`
+- `src/components/pages/home/*`
+- `src/components/pages/company/*`
+- `src/components/pages/product/deepexi/*`
 
 ### 3. Shared Visual Primitives
 
@@ -201,6 +209,7 @@ Static content files should hold:
 - Activity/report card data
 - Company anchor section metadata
 - Compatibility route mapping
+- Disabled news teaser content and labels for home/header/footer
 
 This keeps JSX readable and makes route reuse easier.
 
@@ -226,7 +235,19 @@ This keeps JSX readable and makes route reuse easier.
 - `/deepexi` -> reuse the `/product/deepexi` page module
 - `/fastagi` -> reuse the `/fastAgi` page module
 
-These compatibility routes should not duplicate implementation. They should render the same underlying page module with route-specific metadata only if needed.
+These compatibility routes should not duplicate implementation. They should render the same underlying page module while treating `/product/deepexi` and `/fastAgi` as the official routes.
+
+### Compatibility SEO Rules
+
+- Official route for Deepexi content: `/product/deepexi`
+- Official route for FastAGI content: `/fastAgi`
+- Compatibility routes stay accessible for parity with the current public site:
+  - `/deepexi`
+  - `/fastagi`
+- Compatibility routes should emit canonical metadata pointing to the official route
+- Compatibility routes should emit `robots` metadata equivalent to `noindex,follow`
+- Compatibility routes should not 30x redirect, because the current source site exposes them as live entry pages
+- Legacy FastData aliases are intentionally excluded and should remain unsupported
 
 ### Explicitly Excluded Routes
 
@@ -241,20 +262,29 @@ These compatibility routes should not duplicate implementation. They should rend
 - Company anchor links should scroll to corresponding sections
 - Mobile navigation should open and close like a proper menu
 - Videos and imagery should remain part of the page where the source site uses them
+- The language switcher should preserve its trigger + dropdown interaction layer on desktop and mobile
+- News-related regions should preserve their visual structure even though the destination routes are excluded
 
 ### Intentionally Modified Behavior
 
-- Locale switch click -> `alert("暂无功能")`
-- `/activity` card click -> `alert("暂无功能")`
-- `/industry-report` card click -> `alert("暂无功能")`
+- Locale trigger click -> opens the visible language dropdown panel
+- Locale item click (`简体中文` or `English`) -> `alert("暂无功能")`
+- Home news cards -> visible but non-clickable
+- Home "查看更多" -> visible but non-clickable
+- Header "企业动态" and news shortcut cards -> visible but non-clickable
+- Footer "企业动态" -> visible but non-clickable
+- `/activity` whole-card click -> `alert("暂无功能")`
+- `/industry-report` whole-card click -> `alert("暂无功能")`
 
 These modified actions should be handled by a shared client-side utility component or helper so the wording and accessibility treatment stay consistent.
 
 ### Accessibility Notes For Modified Actions
 
-- Use real `<button>` elements for unavailable action cards if they no longer navigate
+- Use real `<button>` elements for unavailable action cards when the full card is clickable
 - Preserve visual affordance for clickability without pretending they are links
 - If cards remain link-like visually, add concise assistive copy or `aria-label` where needed
+- Keep disabled news items out of the tab order and do not attach click handlers
+- For report cards, preserve the visible CTA styling, but render it as part of the same outer card button instead of a nested interactive control
 
 ## Cloning Workflow
 
@@ -278,6 +308,7 @@ Implementation should use the existing `/clone-website` workflow in page-by-page
   - shared header
   - shared footer
   - homepage sections
+- Freeze news-related visuals as disabled, non-clickable UI during this phase
 - Build the initial site shell
 
 #### Phase 2: Product & Capability Group
@@ -346,12 +377,13 @@ This allows modules to stay presentational while keeping route content centraliz
 
 Each route should define route-specific metadata in App Router files or shared helpers:
 
+- `lang="zh-CN"` at the document root
 - Chinese title
 - Chinese description
 - Open Graph image where available
 - Theme color aligned with the page background if needed
 
-Compatibility routes may share the same metadata content unless there is a reason to differentiate.
+Compatibility routes should reuse page content but override metadata where required to express canonical and `noindex,follow` behavior.
 
 ## Styling Strategy
 
@@ -381,6 +413,8 @@ Expected shared token work includes:
 - Compatibility routes resolve correctly
 - Company anchor links scroll to the correct section
 - Locale switch and unavailable cards produce the expected alert
+- Disabled news entries remain visually present and non-interactive
+- Legacy FastData alias routes remain unsupported
 
 ### Visual Checks
 
@@ -406,7 +440,8 @@ Home page + global shell
 
 - header
 - footer
-- locale switch alert
+- locale switch dropdown + item alert
+- disabled home/header/footer news entries
 - homepage sections
 - global tokens
 
@@ -417,6 +452,7 @@ Product/capability routes + compatibility routes
 - six product/capability pages
 - `/deepexi`
 - `/fastagi`
+- compatibility route SEO metadata
 
 ### TODO 3
 
@@ -468,4 +504,3 @@ Write the implementation plan next, using this design as the source of truth, th
 - homepage
 - shared tokens
 - header/footer
-
