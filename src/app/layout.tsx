@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SkipLink } from "@/components/site/skip-link";
 import "./globals.css";
@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   },
   description:
     "滴普科技成立于2018年，是企业级大模型头部企业，以建设 AI 时代企业数字员工基础平台为战略。",
+};
+
+export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
@@ -35,9 +38,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         <SkipLink />
-        <div id="main-content" className="min-h-full">
-          {children}
-        </div>
+        <div className="min-h-full">{children}</div>
       </body>
     </html>
   );
