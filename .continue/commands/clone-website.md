@@ -123,8 +123,53 @@ Every builder agent must verify `npx tsc --noEmit` passes before finishing. Afte
 
 Navigate to the target URL with browser MCP.
 
+### Canonical Baseline Capture
+
+Before treating any full-page screenshot as the canonical baseline, ensure it reflects the page after scroll-triggered, lazy-rendered, and interaction-dependent content has actually been activated.
+
+The goal is not to preserve one exact gesture sequence forever. The goal is to obtain a trustworthy rendered baseline that matches what a real user would perceive.
+
+**Preferred triggering strategy:**
+- Navigate to the page and allow initial hydration and above-the-fold animations to settle briefly.
+- Identify the primary scroll receiver. This is often `body`, but may be `main` or a custom scroll container.
+- Move pointer focus onto that scroll receiver.
+- Perform a slow wheel-driven scroll from top to bottom, pausing as needed so scroll-triggered sections can render.
+- Perform a slow wheel-driven scroll back to the top.
+- Verify that key milestone elements are visibly rendered before capturing the canonical baseline.
+- Capture the canonical full-page screenshot only after those checks pass.
+
+Do not treat this exact sequence as sacred. If the site behaves differently, adapt the triggering strategy. The baseline matters more than the ritual.
+
+**Acceptance checks and retry policy:**
+- Do not accept a baseline merely because `fullPage: true` returned an image.
+- Do not treat raw text presence in the DOM, serialized data, or script tags as evidence that the page is visibly rendered.
+- Use visible rendered elements as evidence. Prefer stable locators and rendered structure over raw text search.
+- Reject the baseline and retry if large sections that should visibly exist are blank or missing.
+- Reject the baseline and retry if page height or visible section count is obviously inconsistent with the live page.
+- Reject the baseline and retry if milestone sections exist only in script or serialized data, not as visible rendered elements.
+- Reject the baseline and retry if milestone elements are attached but not visible.
+- Reject the baseline and retry if there are abnormal long gaps that suggest scroll-triggered content did not activate.
+
+When validating visible presence, ignore nodes that are not meaningfully rendered, including:
+- `SCRIPT`
+- `STYLE`
+- `NOSCRIPT`
+- Elements with zero width or height
+- Elements with `display: none`
+- Elements with `visibility: hidden`
+- Elements with `opacity: 0`
+
+If validation fails, adapt and retry. Reasonable adjustments include:
+- Using smaller wheel deltas
+- Adding pauses during scroll
+- Targeting the actual scroll container instead of `body`
+- Validating intermediate milestone sections before final capture
+- Dismissing overlays, consent banners, or blockers that prevent rendering
+
+Keep only one canonical baseline per viewport and remove older competing baseline variants to avoid ambiguity.
+
 ### Screenshots
-- Take **full-page screenshots** at desktop (1440px) and mobile (390px) viewports
+- Take **canonical full-page screenshots** at desktop (1440px) and mobile (390px) viewports after the baseline capture protocol succeeds
 - Save to `docs/design-references/` with descriptive names
 - These are your master reference — builders will receive section-specific crops/screenshots later
 
@@ -141,7 +186,7 @@ Extract these from the page before doing anything else:
 
 ### Mandatory Interaction Sweep
 
-This is a dedicated pass AFTER screenshots and BEFORE anything else. Its purpose is to discover every behavior on the page — many of which are invisible in a static screenshot.
+This is a dedicated pass AFTER canonical baseline capture and BEFORE detailed extraction. Its purpose is to discover every behavior on the page — many of which are invisible in a static screenshot.
 
 **Scroll sweep:** Scroll the page slowly from top to bottom via browser MCP. At each section, pause and observe:
 - Does the header change appearance? Record the scroll position where it triggers.
