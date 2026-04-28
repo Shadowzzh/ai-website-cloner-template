@@ -86,6 +86,44 @@ This guide outlines what to capture when inspecting a target website via Chrome 
 - [ ] Empty states
 - [ ] Error states
 
+### Canonical Baseline Sanity Check
+- [ ] Treat the baseline as a rendered-state artifact, not just a successful screenshot command
+- [ ] Activate scroll-triggered and lazy-rendered content before accepting the baseline
+- [ ] Prefer a wheel-driven top-to-bottom pass and return-to-top pass when the site appears scroll-reactive
+- [ ] Focus the actual scroll receiver before triggering scroll interactions
+- [ ] Validate key milestone elements as visibly rendered before the final full-page capture
+- [ ] Keep only one canonical baseline per viewport to avoid ambiguity
+
+### What Counts As Visible Evidence
+- [ ] Prefer stable locators and visibly rendered elements over raw text search
+- [ ] Confirm milestone sections by visible heading, card, media block, CTA, nav item, or other rendered anchor
+- [ ] Treat viewport visibility and rendered layout as stronger evidence than serialized DOM text
+- [ ] If needed, sample the DOM, but ignore non-meaningful nodes and hidden elements
+
+### What Does Not Count As Visible Content
+- [ ] Text that exists only inside `SCRIPT`, `STYLE`, or `NOSCRIPT`
+- [ ] Elements with zero width or height
+- [ ] Elements hidden by `display: none`
+- [ ] Elements hidden by `visibility: hidden`
+- [ ] Elements hidden by `opacity: 0`
+- [ ] Content that exists in serialized data but has no visible rendered counterpart on screen
+
+### Failure Signals That Require Retry
+- [ ] Large sections that should visibly exist are blank or missing
+- [ ] Page height or visible section count is obviously inconsistent with the live page
+- [ ] Only the hero appears correct while lower scroll-triggered sections remain empty
+- [ ] Milestone elements are attached in the DOM but not actually visible
+- [ ] The page shows abnormal long blank gaps that suggest rendering was not triggered
+- [ ] Multiple competing baseline files exist and it is unclear which one is authoritative
+
+### Retry And Adaptation Ideas
+- [ ] Reduce wheel delta size and scroll more gradually
+- [ ] Add pauses during long scroll passes so lazy content can render
+- [ ] Scroll the actual container instead of assuming `body` owns scrolling
+- [ ] Validate intermediate milestones before taking the final baseline
+- [ ] Dismiss overlays, cookie banners, or blockers that prevent rendering
+- [ ] Re-capture only after the page state looks plausibly complete to a human reviewer
+
 ### Design Tokens to Extract
 - [ ] **Colors** — background, text (primary/secondary/muted), accent, border, hover, error, success, warning
 - [ ] **Typography** — font family, sizes (h1-h6, body, caption, label), weights, line heights, letter spacing
