@@ -28,6 +28,7 @@ Follow-up plans should handle TODO 2 through TODO 6 after this slice lands clean
 **Create**
 
 - `docs/research/deepexi/home-reference.md`
+- `scripts/download-deepexi-home-assets.mjs`
 - `src/types/site.ts`
 - `src/content/site-nav.ts`
 - `src/content/site-footer.ts`
@@ -112,9 +113,31 @@ Source URL: https://www.deepexi.com/
 - https://www.deepexi.com/images/index-pc-bg.png
 - https://www.deepexi.com/images/index-h5-bg.png
 - https://fastdata-cms-prd-obs.deepexi.com/Deepexi_OS_5ee62d2557.png
+- https://fastdata-cms-prd-obs.deepexi.com/Deepexi_2x_7a70299006.png
+- https://fastdata-cms-prd-obs.deepexi.com/Fast_AGI_2x_341deee87f.png
+- https://fastdata-cms-prd-obs.deepexi.com/2x_5a75727354.jpg
+- https://fastdata-cms-prd-obs.deepexi.com/2x_8a3f87334e.jpg
+- https://fastdata-cms-prd-obs.deepexi.com/hk_2x_d70cdff979.png
 - https://fastdata-cms-prd-obs.deepexi.com/2026_0417_deepclaw_99fe8ea4fb.png
 - https://fastdata-cms-prd-obs.deepexi.com/0326_0c1411e409.png
 - https://fastdata-cms-prd-obs.deepexi.com/20260326_086178a2b7.png
+
+## Local Asset Targets Used In TODO 1
+
+- `public/images/deepexi/home/logo-zh.png`
+- `public/images/deepexi/home/hero-desktop.jpg`
+- `public/images/deepexi/home/hero-mobile.jpg`
+- `public/images/deepexi/home/platform-bg-desktop.png`
+- `public/images/deepexi/home/platform-bg-mobile.png`
+- `public/images/deepexi/home/platform-visual.png`
+- `public/images/deepexi/home/feature-deepexi.png`
+- `public/images/deepexi/home/feature-fastagi.png`
+- `public/images/deepexi/home/case-belle.png`
+- `public/images/deepexi/home/case-shipyard.png`
+- `public/images/deepexi/home/case-hkha.png`
+- `public/images/deepexi/home/news-1.png`
+- `public/images/deepexi/home/news-2.png`
+- `public/images/deepexi/home/news-3.png`
 ```
 
 - [ ] **Step 3: Verify the reference note is complete before touching app code**
@@ -122,7 +145,7 @@ Source URL: https://www.deepexi.com/
 Run:
 
 ```bash
-test -f docs/research/deepexi/home-reference.md && rg -n "Homepage Sections|Home News Rules|Locale Rules|Asset Paths Used In TODO 1" docs/research/deepexi/home-reference.md
+test -f docs/research/deepexi/home-reference.md && rg -n "Homepage Sections|Home News Rules|Locale Rules|Asset Paths Used In TODO 1|Local Asset Targets Used In TODO 1" docs/research/deepexi/home-reference.md
 ```
 
 Expected:
@@ -132,13 +155,135 @@ docs/research/deepexi/home-reference.md:6:## Homepage Sections
 docs/research/deepexi/home-reference.md:15:## Home News Rules
 docs/research/deepexi/home-reference.md:21:## Locale Rules
 docs/research/deepexi/home-reference.md:26:## Asset Paths Used In TODO 1
+docs/research/deepexi/home-reference.md:40:## Local Asset Targets Used In TODO 1
 ```
 
-- [ ] **Step 4: Commit the reference artifacts**
+- [ ] **Step 4: Create the asset download script**
+
+Create `scripts/download-deepexi-home-assets.mjs`:
+
+```js
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+
+const assetMap = [
+  [
+    "https://www.deepexi.com/images/logo-zh.png",
+    "public/images/deepexi/home/logo-zh.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/AI_2x_fc25bd31a2.jpg",
+    "public/images/deepexi/home/hero-desktop.jpg",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/H5_banner_e0d41088fe.jpg",
+    "public/images/deepexi/home/hero-mobile.jpg",
+  ],
+  [
+    "https://www.deepexi.com/images/index-pc-bg.png",
+    "public/images/deepexi/home/platform-bg-desktop.png",
+  ],
+  [
+    "https://www.deepexi.com/images/index-h5-bg.png",
+    "public/images/deepexi/home/platform-bg-mobile.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/Deepexi_OS_5ee62d2557.png",
+    "public/images/deepexi/home/platform-visual.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/Fast_AGI_2x_341deee87f.png",
+    "public/images/deepexi/home/feature-fastagi.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/Deepexi_2x_7a70299006.png",
+    "public/images/deepexi/home/feature-deepexi.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/2x_5a75727354.jpg",
+    "public/images/deepexi/home/case-belle.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/2x_8a3f87334e.jpg",
+    "public/images/deepexi/home/case-shipyard.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/hk_2x_d70cdff979.png",
+    "public/images/deepexi/home/case-hkha.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/2026_0417_deepclaw_99fe8ea4fb.png",
+    "public/images/deepexi/home/news-1.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/0326_0c1411e409.png",
+    "public/images/deepexi/home/news-2.png",
+  ],
+  [
+    "https://fastdata-cms-prd-obs.deepexi.com/20260326_086178a2b7.png",
+    "public/images/deepexi/home/news-3.png",
+  ],
+];
+
+async function downloadAsset(sourceUrl, targetPath) {
+  const targetFile = resolve(targetPath);
+  await mkdir(dirname(targetFile), { recursive: true });
+
+  const response = await fetch(sourceUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${sourceUrl}: ${response.status}`);
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  await writeFile(targetFile, Buffer.from(arrayBuffer));
+  console.log(`Downloaded ${targetPath}`);
+}
+
+for (const [sourceUrl, targetPath] of assetMap) {
+  await downloadAsset(sourceUrl, targetPath);
+}
+```
+
+- [ ] **Step 5: Run the asset download script**
+
+Run:
 
 ```bash
-git add docs/research/deepexi/home-reference.md docs/design-references
-git commit -m "docs: capture Deepexi homepage reference artifacts"
+node scripts/download-deepexi-home-assets.mjs
+```
+
+Expected:
+
+```text
+Downloaded public/images/deepexi/home/logo-zh.png
+Downloaded public/images/deepexi/home/hero-desktop.jpg
+Downloaded public/images/deepexi/home/hero-mobile.jpg
+```
+
+- [ ] **Step 6: Verify the required local assets exist**
+
+Run:
+
+```bash
+test -f public/images/deepexi/home/logo-zh.png
+test -f public/images/deepexi/home/hero-desktop.jpg
+test -f public/images/deepexi/home/hero-mobile.jpg
+test -f public/images/deepexi/home/feature-fastagi.png
+test -f public/images/deepexi/home/feature-deepexi.png
+test -f public/images/deepexi/home/news-1.png
+```
+
+Expected:
+
+```text
+exit 0
+```
+
+- [ ] **Step 7: Commit the reference artifacts**
+
+```bash
+git add docs/research/deepexi/home-reference.md scripts/download-deepexi-home-assets.mjs public/images/deepexi/home docs/design-references
+git commit -m "docs: capture Deepexi home references and assets"
 ```
 
 ### Task 2: Define Typed Site Content Contracts
@@ -194,7 +339,8 @@ export interface HomeFeatureCard {
   description: string;
   imageSrc: string;
   imageAlt: string;
-  href: string;
+  href?: string;
+  kind: SiteLinkKind;
 }
 
 export interface HomeCaseStory {
@@ -213,24 +359,24 @@ Create `src/content/site-nav.ts`:
 import type { NavColumn, NewsTeaserItem, SiteLinkItem } from "@/types/site";
 
 export const deepexiPrimaryNav: SiteLinkItem[] = [
-  { label: "行业实践", href: "/case", kind: "route" },
-  { label: "投资者关系", href: "/investor-relations", kind: "route" },
+  { label: "行业实践", href: "/case", kind: "unavailable" },
+  { label: "投资者关系", href: "/investor-relations", kind: "unavailable" },
 ];
 
 export const deepexiOsColumns: NavColumn[] = [
   {
     title: "基础设施",
     items: [
-      { label: "Deepexi 企业大模型", href: "/product/deepexi", kind: "route" },
-      { label: "FastAGI 企业智能体平台", href: "/fastAgi", kind: "route" },
+      { label: "Deepexi 企业大模型", href: "/product/deepexi", kind: "unavailable" },
+      { label: "FastAGI 企业智能体平台", href: "/fastAgi", kind: "unavailable" },
     ],
   },
   {
     title: "智能体",
     items: [
-      { label: "DeepSense 工业智能体", href: "/product/deepSense", kind: "route" },
-      { label: "DataSense 运营智能体", href: "/product/dataSense", kind: "route" },
-      { label: "DeepClaw 企业基础智能体", href: "/product/deepClaw", kind: "route" },
+      { label: "DeepSense 工业智能体", href: "/product/deepSense", kind: "unavailable" },
+      { label: "DataSense 运营智能体", href: "/product/dataSense", kind: "unavailable" },
+      { label: "DeepClaw 企业基础智能体", href: "/product/deepClaw", kind: "unavailable" },
     ],
   },
 ];
@@ -239,11 +385,11 @@ export const aboutColumns: NavColumn[] = [
   {
     title: "关于滴普",
     items: [
-      { label: "关于滴普", href: "/company", kind: "route" },
-      { label: "企业简介", href: "/company#intro", kind: "anchor" },
-      { label: "发展历程", href: "/company#process", kind: "anchor" },
-      { label: "客户信赖", href: "/company#trust", kind: "anchor" },
-      { label: "联系我们", href: "/company#contact", kind: "anchor" },
+      { label: "关于滴普", href: "/company", kind: "unavailable" },
+      { label: "企业简介", href: "/company#intro", kind: "unavailable" },
+      { label: "发展历程", href: "/company#process", kind: "unavailable" },
+      { label: "客户信赖", href: "/company#trust", kind: "unavailable" },
+      { label: "联系我们", href: "/company#contact", kind: "unavailable" },
     ],
   },
   {
@@ -285,18 +431,18 @@ export const footerGroups: FooterGroup[] = [
   {
     title: "DeepexiOS",
     items: [
-      { label: "Deepexi 企业大模型", href: "/product/deepexi", kind: "route" },
-      { label: "FastAGI 企业智能体平台", href: "/fastAgi", kind: "route" },
+      { label: "Deepexi 企业大模型", href: "/product/deepexi", kind: "unavailable" },
+      { label: "FastAGI 企业智能体平台", href: "/fastAgi", kind: "unavailable" },
     ],
   },
   {
     title: "投资者关系",
-    items: [{ label: "投资者关系", href: "/investor-relations", kind: "route" }],
+    items: [{ label: "投资者关系", href: "/investor-relations", kind: "unavailable" }],
   },
   {
     title: "关于我们",
     items: [
-      { label: "关于滴普", href: "/company", kind: "route" },
+      { label: "关于滴普", href: "/company", kind: "unavailable" },
       { label: "企业动态", kind: "unavailable" },
     ],
   },
@@ -328,6 +474,7 @@ export const homeFeatureCards: HomeFeatureCard[] = [
     imageSrc: "/images/deepexi/home/feature-fastagi.png",
     imageAlt: "FastAGI 产品展示图",
     href: "/fastAgi",
+    kind: "unavailable",
   },
   {
     title: "Deepexi企业大模型",
@@ -336,6 +483,7 @@ export const homeFeatureCards: HomeFeatureCard[] = [
     imageSrc: "/images/deepexi/home/feature-deepexi.png",
     imageAlt: "Deepexi 企业大模型展示图",
     href: "/product/deepexi",
+    kind: "unavailable",
   },
 ];
 
@@ -582,6 +730,7 @@ Create `src/components/site/locale-switch.tsx`:
 "use client";
 
 import { useState } from "react";
+import { ChevronDown, Languages } from "lucide-react";
 import { showUnavailableAlert } from "@/components/site/unavailable-alert";
 
 export function LocaleSwitch() {
@@ -594,11 +743,12 @@ export function LocaleSwitch() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="语言切换"
-        className="inline-flex items-center gap-1 text-base transition-colors hover:text-primary focus-visible:ring-2"
+        className="inline-flex items-center gap-1 text-base transition-colors hover:text-primary"
         onClick={() => setOpen((value) => !value)}
       >
-        <span aria-hidden="true"></span>
+        <Languages aria-hidden="true" className="h-4 w-4" />
         <span>简体中文</span>
+        <ChevronDown aria-hidden="true" className="h-4 w-4" />
       </button>
 
       {open ? (
@@ -636,15 +786,22 @@ Create `src/components/site/mobile-menu.tsx`:
 ```tsx
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import type { SiteLinkItem } from "@/types/site";
+import { Menu, X } from "lucide-react";
+import { LocaleSwitch } from "@/components/site/locale-switch";
+import type { NavColumn, SiteLinkItem } from "@/types/site";
 
 interface MobileMenuProps {
-  items: SiteLinkItem[];
+  primaryItems: SiteLinkItem[];
+  deepexiOsColumns: NavColumn[];
+  aboutColumns: NavColumn[];
 }
 
-export function MobileMenu({ items }: MobileMenuProps) {
+export function MobileMenu({
+  primaryItems,
+  deepexiOsColumns,
+  aboutColumns,
+}: MobileMenuProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -657,21 +814,38 @@ export function MobileMenu({ items }: MobileMenuProps) {
         className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-transparent transition-colors hover:bg-muted"
         onClick={() => setOpen((value) => !value)}
       >
-        <span aria-hidden="true"></span>
+        {open ? (
+          <X aria-hidden="true" className="h-5 w-5" />
+        ) : (
+          <Menu aria-hidden="true" className="h-5 w-5" />
+        )}
       </button>
 
       {open ? (
         <div
           id="mobile-nav-panel"
-          className="absolute inset-x-0 top-full border-t border-border bg-white p-4 shadow-md"
+          className="absolute inset-x-0 top-full space-y-6 border-t border-border bg-white p-4 shadow-md"
         >
+          <div>
+            <p className="mb-3 text-sm font-semibold text-foreground">DeepexiOS</p>
+            <ul className="space-y-3">
+              {deepexiOsColumns.flatMap((column) => column.items).map((item) => (
+                <li key={item.label}>
+                  <span data-disabled-entry="true" className="block text-base font-medium">
+                    {item.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <ul className="space-y-4">
-            {items.map((item) => (
+            {primaryItems.map((item) => (
               <li key={item.label}>
                 {item.href ? (
-                  <Link className="block text-base font-medium" href={item.href}>
+                  <span data-disabled-entry="true" className="block text-base font-medium">
                     {item.label}
-                  </Link>
+                  </span>
                 ) : (
                   <span data-disabled-entry="true" className="block text-base font-medium">
                     {item.label}
@@ -680,6 +854,23 @@ export function MobileMenu({ items }: MobileMenuProps) {
               </li>
             ))}
           </ul>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold text-foreground">关于我们</p>
+            <ul className="space-y-3">
+              {aboutColumns.flatMap((column) => column.items).map((item) => (
+                <li key={item.label}>
+                  <span data-disabled-entry="true" className="block text-base font-medium">
+                    {item.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="border-t border-border pt-4">
+            <LocaleSwitch />
+          </div>
         </div>
       ) : null}
     </div>
@@ -722,12 +913,42 @@ git commit -m "feat: add Deepexi shell interaction primitives"
 Create `src/components/site/header.tsx`:
 
 ```tsx
+"use client";
+
 import Link from "next/link";
+import { useState, type FocusEvent, type KeyboardEvent } from "react";
+import { ChevronDown } from "lucide-react";
 import { LocaleSwitch } from "@/components/site/locale-switch";
 import { MobileMenu } from "@/components/site/mobile-menu";
 import { aboutColumns, aboutNewsTeasers, deepexiOsColumns, deepexiPrimaryNav } from "@/content/site-nav";
 
 export function Header() {
+  const [openMenu, setOpenMenu] = useState<"deepexiOs" | "about" | null>(null);
+
+  function closeIfFocusLeaves(
+    event: FocusEvent<HTMLDivElement>,
+    menu: "deepexiOs" | "about",
+  ) {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      setOpenMenu((value) => (value === menu ? null : value));
+    }
+  }
+
+  function handleTriggerKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    menu: "deepexiOs" | "about",
+  ) {
+    if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
+      event.preventDefault();
+      setOpenMenu(menu);
+    }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpenMenu(null);
+    }
+  }
+
   return (
     <header className="sticky top-0 z-[100] border-b border-black/5 bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-4">
@@ -743,20 +964,42 @@ export function Header() {
           </Link>
 
           <nav aria-label="主导航" className="hidden md:flex md:items-center md:gap-8">
-            <div className="group relative">
-              <button type="button" className="text-base font-medium hover:text-primary">
+            <div
+              className="relative"
+              onBlurCapture={(event) => closeIfFocusLeaves(event, "deepexiOs")}
+              onMouseEnter={() => setOpenMenu("deepexiOs")}
+              onMouseLeave={() => setOpenMenu((value) => (value === "deepexiOs" ? null : value))}
+            >
+              <button
+                type="button"
+                aria-expanded={openMenu === "deepexiOs"}
+                aria-haspopup="menu"
+                className="inline-flex items-center gap-1 text-base font-medium hover:text-primary"
+                onClick={() =>
+                  setOpenMenu((value) => (value === "deepexiOs" ? null : "deepexiOs"))
+                }
+                onKeyDown={(event) => handleTriggerKeyDown(event, "deepexiOs")}
+              >
                 DeepexiOS
+                <ChevronDown aria-hidden="true" className="h-4 w-4" />
               </button>
-              <div className="invisible absolute left-0 top-full mt-4 grid min-w-[520px] grid-cols-2 gap-8 rounded-2xl bg-white p-8 opacity-0 shadow-xl transition-opacity group-hover:visible group-hover:opacity-100">
+              <div
+                className={`absolute left-0 top-full mt-4 grid min-w-[520px] grid-cols-2 gap-8 rounded-2xl bg-white p-8 shadow-xl transition-opacity ${
+                  openMenu === "deepexiOs"
+                    ? "visible opacity-100"
+                    : "invisible opacity-0"
+                }`}
+                role="menu"
+              >
                 {deepexiOsColumns.map((column) => (
                   <div key={column.title}>
                     <p className="mb-3 text-sm font-semibold text-foreground">{column.title}</p>
                     <ul className="space-y-3">
                       {column.items.map((item) => (
                         <li key={item.label}>
-                          <Link className="text-sm text-muted-foreground hover:text-primary" href={item.href!}>
+                          <span data-disabled-entry="true" className="text-sm text-muted-foreground">
                             {item.label}
-                          </Link>
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -766,16 +1009,34 @@ export function Header() {
             </div>
 
             {deepexiPrimaryNav.map((item) => (
-              <Link key={item.label} className="text-base font-medium hover:text-primary" href={item.href!}>
+              <span key={item.label} data-disabled-entry="true" className="text-base font-medium text-foreground">
                 {item.label}
-              </Link>
+              </span>
             ))}
 
-            <div className="group relative">
-              <button type="button" className="text-base font-medium hover:text-primary">
+            <div
+              className="relative"
+              onBlurCapture={(event) => closeIfFocusLeaves(event, "about")}
+              onMouseEnter={() => setOpenMenu("about")}
+              onMouseLeave={() => setOpenMenu((value) => (value === "about" ? null : value))}
+            >
+              <button
+                type="button"
+                aria-expanded={openMenu === "about"}
+                aria-haspopup="menu"
+                className="inline-flex items-center gap-1 text-base font-medium hover:text-primary"
+                onClick={() => setOpenMenu((value) => (value === "about" ? null : "about"))}
+                onKeyDown={(event) => handleTriggerKeyDown(event, "about")}
+              >
                 关于我们
+                <ChevronDown aria-hidden="true" className="h-4 w-4" />
               </button>
-              <div className="invisible absolute left-0 top-full mt-4 grid min-w-[720px] grid-cols-[1fr_1fr] gap-10 rounded-2xl bg-white p-8 opacity-0 shadow-xl transition-opacity group-hover:visible group-hover:opacity-100">
+              <div
+                className={`absolute left-0 top-full mt-4 grid min-w-[720px] grid-cols-[1fr_1fr] gap-10 rounded-2xl bg-white p-8 shadow-xl transition-opacity ${
+                  openMenu === "about" ? "visible opacity-100" : "invisible opacity-0"
+                }`}
+                role="menu"
+              >
                 <div className="space-y-6">
                   {aboutColumns.map((column) => (
                     <div key={column.title}>
@@ -783,7 +1044,7 @@ export function Header() {
                       <ul className="space-y-3">
                         {column.items.map((item) => (
                           <li key={item.label}>
-                            {item.href ? (
+                            {item.kind !== "unavailable" && item.href ? (
                               <Link className="text-sm text-muted-foreground hover:text-primary" href={item.href}>
                                 {item.label}
                               </Link>
@@ -818,7 +1079,11 @@ export function Header() {
           <div className="hidden md:block">
             <LocaleSwitch />
           </div>
-          <MobileMenu items={deepexiPrimaryNav} />
+          <MobileMenu
+            aboutColumns={aboutColumns}
+            deepexiOsColumns={deepexiOsColumns}
+            primaryItems={deepexiPrimaryNav}
+          />
         </div>
       </div>
     </header>
@@ -845,7 +1110,7 @@ export function Footer() {
               <ul className="mt-4 space-y-3">
                 {group.items.map((item) => (
                   <li key={item.label}>
-                    {item.href ? (
+                    {item.kind !== "unavailable" && item.href ? (
                       <Link className="text-sm text-muted-foreground hover:text-primary" href={item.href}>
                         {item.label}
                       </Link>
@@ -908,7 +1173,7 @@ git commit -m "feat: add Deepexi shared header and footer"
 Create `src/components/pages/home/home-page.tsx`:
 
 ```tsx
-import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import {
@@ -923,9 +1188,19 @@ export function HomePage() {
     <>
       <Header />
       <main id="main-content" className="min-h-screen">
-        <section className="relative min-h-[720px] bg-cover bg-center" style={{ backgroundImage: `url(${homeHero.desktopImageSrc})` }}>
+        <section className="relative min-h-[720px] overflow-hidden">
+          <picture className="absolute inset-0">
+            <source media="(max-width: 767px)" srcSet={homeHero.mobileImageSrc} />
+            <img
+              alt=""
+              className="h-full w-full object-cover"
+              height="720"
+              src={homeHero.desktopImageSrc}
+              width="1440"
+            />
+          </picture>
           <div className="mx-auto flex min-h-[720px] max-w-[1200px] items-center px-4">
-            <div className="max-w-[620px]">
+            <div className="relative z-10 max-w-[620px]">
               <h1 className="text-balance text-5xl font-semibold leading-tight text-foreground md:text-6xl">
                 {homeHero.title}
               </h1>
@@ -947,10 +1222,10 @@ export function HomePage() {
 
         <section className="mx-auto grid max-w-[1200px] gap-8 px-4 pb-16 md:grid-cols-2">
           {homeFeatureCards.map((card) => (
-            <Link
+            <article
               key={card.title}
-              className="rounded-3xl border border-border bg-white p-8 transition-shadow hover:shadow-lg"
-              href={card.href}
+              data-disabled-entry="true"
+              className="rounded-3xl border border-border bg-white p-8"
             >
               <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] md:items-center">
                 <div className="min-w-0">
@@ -965,7 +1240,7 @@ export function HomePage() {
                   width="320"
                 />
               </div>
-            </Link>
+            </article>
           ))}
         </section>
 
@@ -993,7 +1268,7 @@ export function HomePage() {
             </h2>
             <span data-disabled-entry="true" className="inline-flex items-center gap-2 text-sm text-foreground">
               查看更多
-              <span aria-hidden="true"></span>
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </span>
           </div>
 
@@ -1059,8 +1334,11 @@ Then verify in the browser:
 - footer is visible
 - locale trigger opens a dropdown
 - clicking `简体中文` or `English` shows `alert("暂无功能")`
+- desktop DeepexiOS and 关于我们 dropdowns open via mouse and keyboard
+- mobile menu contains DeepexiOS、行业实践、投资者关系、关于我们、语言切换
 - latest news cards are visible but do not navigate
 - `查看更多` is visible but not interactive
+- product feature cards are visible but do not navigate
 - footer `企业动态` is visible but not interactive
 
 - [ ] **Step 5: Run the UI guideline review against all TODO 1 UI files**
