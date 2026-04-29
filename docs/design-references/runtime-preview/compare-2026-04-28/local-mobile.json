@@ -1,0 +1,73 @@
+{
+  "url": "http://127.0.0.1:3014/",
+  "lang": "zh-CN",
+  "title": "滴普科技 - AI创造无限可能",
+  "headings": [
+    {
+      "tag": "H1",
+      "text": "AI创造无限可能"
+    },
+    {
+      "tag": "H2",
+      "text": "AI级企业操作系统 DeepexiOS 平台"
+    },
+    {
+      "tag": "H3",
+      "text": "DeepSense 工业智能体"
+    },
+    {
+      "tag": "H3",
+      "text": "DataSense 运营智能体"
+    },
+    {
+      "tag": "H3",
+      "text": "DeepClaw 企业基础智能体"
+    },
+    {
+      "tag": "H2",
+      "text": "FastAGI 企业级人工智能解决方案"
+    },
+    {
+      "tag": "H2",
+      "text": "Deepexi企业大模型"
+    },
+    {
+      "tag": "H2",
+      "text": "最新动态"
+    }
+  ],
+  "navTexts": [
+    "DeepexiOS",
+    "行业实践",
+    "投资者关系",
+    "关于我们"
+  ],
+  "buttons": [
+    {
+      "text": "DeepexiOS",
+      "ariaLabel": null,
+      "ariaExpanded": "false"
+    },
+    {
+      "text": "关于我们",
+      "ariaLabel": null,
+      "ariaExpanded": "false"
+    },
+    {
+      "text": "简体中文",
+      "ariaLabel": "语言切换",
+      "ariaExpanded": "false"
+    },
+    {
+      "text": "简体中文",
+      "ariaLabel": "语言切换",
+      "ariaExpanded": "false"
+    },
+    {
+      "text": "",
+      "ariaLabel": "打开菜单",
+      "ariaExpanded": "false"
+    }
+  ],
+  "imageCount": 13
+}

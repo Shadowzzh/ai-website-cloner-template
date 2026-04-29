@@ -1,5 +1,9 @@
 # Deepexi Site Clone Design
 
+Deprecated: This design was written before the 2026-04-28 live-site rebaseline pass completed.
+Deprecated: Do not use it as the authoritative homepage reference for the current live Deepexi site.
+Superseded by the 2026-04-29 homepage rebaseline planning work and the canonical screenshots under `docs/design-references/runtime-preview/compare-2026-04-28/`.
+
 Date: 2026-04-28
 Status: Draft approved in chat, written for implementation planning
 Project: `ai-website-cloner-template`
