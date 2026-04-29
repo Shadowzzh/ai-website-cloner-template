@@ -1,22 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { LocaleSwitch } from "@/components/site/locale-switch";
-import type { NavColumn, SiteLinkItem } from "@/types/site";
+import type { SiteLinkItem } from "@/types/site";
 
 interface MobileMenuProps {
   primaryItems: SiteLinkItem[];
-  deepexiOsColumns: NavColumn[];
-  aboutColumns: NavColumn[];
 }
 
-export function MobileMenu({
-  primaryItems,
-  deepexiOsColumns,
-  aboutColumns,
-}: MobileMenuProps) {
+export function MobileMenu({ primaryItems }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  function renderPrimaryItem(item: SiteLinkItem) {
+    if (item.kind === "route" || item.kind === "anchor") {
+      return (
+        <Link
+          className="block py-4 text-[16px] font-medium text-foreground"
+          href={item.href}
+          onClick={() => setOpen(false)}
+          prefetch={false}
+        >
+          {item.label}
+        </Link>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        className="block py-4 text-[16px] font-medium text-foreground"
+        onClick={() => setOpen(false)}
+      >
+        {item.label}
+      </button>
+    );
+  }
 
   return (
     <div className="md:hidden">
@@ -25,7 +52,7 @@ export function MobileMenu({
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
         aria-label="打开菜单"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-transparent transition-colors hover:bg-muted"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-transparent transition-colors hover:bg-[#f4f7fc]"
         onClick={() => setOpen((value) => !value)}
       >
         {open ? (
@@ -38,60 +65,30 @@ export function MobileMenu({
       {open ? (
         <div
           id="mobile-nav-panel"
-          className="absolute inset-x-0 top-full space-y-6 border-t border-border bg-white p-4 shadow-md"
+          className="fixed inset-x-0 bottom-0 top-20 z-[95] border-t border-[#e6edf5] bg-white"
         >
-          <div>
-            <p className="mb-3 text-sm font-semibold text-foreground">DeepexiOS</p>
-            <div className="space-y-4">
-              {deepexiOsColumns.map((column) => (
-                <div key={column.title} className="space-y-3">
-                  <p className="text-sm font-medium text-muted-foreground">{column.title}</p>
-                  <ul className="space-y-3">
-                    {column.items.map((item) => (
-                      <li key={item.label}>
-                        <span data-disabled-entry="true" className="block text-base font-medium">
-                          {item.label}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="h-full w-[116px] bg-[#f1f4f8] px-3 pt-6">
+            <button
+              type="button"
+              className="block py-4 text-[16px] font-medium text-foreground"
+              onClick={() => setOpen(false)}
+            >
+              DeepexiOS
+            </button>
 
-          <ul className="space-y-4">
+            <ul>
             {primaryItems.map((item) => (
-              <li key={item.label}>
-                <span data-disabled-entry="true" className="block text-base font-medium">
-                  {item.label}
-                </span>
-              </li>
+              <li key={item.label}>{renderPrimaryItem(item)}</li>
             ))}
-          </ul>
+            </ul>
 
-          <div>
-            <p className="mb-3 text-sm font-semibold text-foreground">关于我们</p>
-            <div className="space-y-4">
-              {aboutColumns.map((column) => (
-                <div key={column.title} className="space-y-3">
-                  <p className="text-sm font-medium text-muted-foreground">{column.title}</p>
-                  <ul className="space-y-3">
-                    {column.items.map((item) => (
-                      <li key={item.label}>
-                        <span data-disabled-entry="true" className="block text-base font-medium">
-                          {item.label}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="border-t border-border pt-4">
-            <LocaleSwitch />
+            <button
+              type="button"
+              className="block py-4 text-[16px] font-medium text-foreground"
+              onClick={() => setOpen(false)}
+            >
+              关于我们
+            </button>
           </div>
         </div>
       ) : null}

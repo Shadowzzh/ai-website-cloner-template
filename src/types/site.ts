@@ -2,8 +2,10 @@ export type SiteLinkKind = "route" | "anchor" | "unavailable";
 export type SiteRouteHref =
   | "/case"
   | "/company"
+  | "/deepexi"
   | "/fastAgi"
   | "/investor-relations"
+  | "/news"
   | "/product/dataSense"
   | "/product/deepClaw"
   | "/product/deepSense"
@@ -65,6 +67,13 @@ interface HomeFeatureCardBase {
   imageAlt: string;
 }
 
+export interface HomeAgentCard {
+  title: string;
+  description: string;
+  imageSrc: string;
+  imageAlt: string;
+}
+
 export type HomeFeatureCard =
   | (HomeFeatureCardBase & {
       kind: "route";
@@ -78,10 +87,3 @@ export type HomeFeatureCard =
       kind: "unavailable";
       href?: never;
     });
-
-export interface HomeCaseStory {
-  title: string;
-  description: string;
-  imageSrc: string;
-  imageAlt: string;
-}

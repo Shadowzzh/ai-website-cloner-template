@@ -1,0 +1,76 @@
+- generic [active] [ref=e1]:
+  - link "跳到主要内容" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "滴普科技首页" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "滴普科技" [ref=e8]
+        - generic [ref=e10]:
+          - button "语言切换" [ref=e12]:
+            - img [ref=e13]
+            - generic [ref=e17]: 简体中文
+            - img [ref=e18]
+          - generic [ref=e20]: "|"
+          - button "打开菜单" [ref=e22]:
+            - img [ref=e23]
+    - main [ref=e24]:
+      - heading "AI创造无限可能" [level=1] [ref=e28]
+      - region "AI级企业操作系统 DeepexiOS 平台" [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - heading "AI级企业操作系统 DeepexiOS 平台" [level=2] [ref=e32]
+            - paragraph [ref=e33]: DeepexiOS 作为 AI 级企业操作系统是以 Deepexi 企业大模型与 FastAGI 企业智能体平台协同而成。可面向客户构建企业级 Skill 能力单元；通过多类企业级 Skills 组合形成 AI 员工，再由多名 AI 员工协同组建不同领域的行业智能体。目前已落地三大核心智能体，分别为工业智能体 DeepSense、运营智能体 DataSense 及企业基础智能体 DeepClaw，以智能体模式，持续稳定地为行业客户交付业务价值。
+          - img "DeepexiOS 平台总览图" [ref=e35]
+          - generic [ref=e36]:
+            - article [ref=e37]
+            - article [ref=e41]
+            - article [ref=e45]
+      - generic [ref=e51]:
+        - article [ref=e52]:
+          - generic [ref=e53]:
+            - heading "FastAGI 企业级人工智能解决方案" [level=2] [ref=e54]
+            - paragraph [ref=e55]: FastAGI是基于自有企业级多模态大模型技术栈构建的Agentic人工智能解决方案，旨在无缝集成及加速跨业务职能实施AI解决方案。FastAGI解决方案通过提供深度运营决策支持及生产力增强工具，直接解决核心业务挑战。
+            - link "查看详情" [ref=e56] [cursor=pointer]:
+              - /url: /fastAgi
+          - img "FastAGI 产品展示图" [ref=e60]
+        - article [ref=e61]:
+          - generic [ref=e62]:
+            - heading "Deepexi企业大模型" [level=2] [ref=e63]
+            - paragraph [ref=e64]: Deepexi 企业大模型并非仅依托互联网公开数据的通用 AI，其通过学习企业内部业务逻辑、专有名词与历史数据，形成企业“独一家”的认知，具备企业内部的沟通语境。
+            - link "查看详情" [ref=e65] [cursor=pointer]:
+              - /url: /deepexi
+          - img "Deepexi 企业大模型展示图" [ref=e69]
+      - region "最新动态" [ref=e70]:
+        - generic [ref=e71]:
+          - heading "最新动态" [level=2] [ref=e73]
+          - list [ref=e74]:
+            - listitem [ref=e75]
+            - listitem [ref=e80]
+            - listitem [ref=e85]
+          - link "查看更多" [ref=e91] [cursor=pointer]:
+            - /url: /news
+            - text: 查看更多
+            - img [ref=e92]
+    - contentinfo [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - paragraph [ref=e98]: DeepexiOS
+            - list [ref=e99]
+          - generic [ref=e104]:
+            - paragraph [ref=e105]: 投资者关系
+            - list [ref=e106]
+          - generic [ref=e109]:
+            - paragraph [ref=e110]: 关于我们
+            - list [ref=e111]
+          - generic [ref=e116]:
+            - paragraph [ref=e117]: 关注我们
+            - img "滴普科技微信公众号二维码" [ref=e119]
+        - generic [ref=e121]:
+          - img "滴普科技底部标识" [ref=e122]
+          - paragraph [ref=e123]: 滴普科技股份有限公司 ｜ 北京 · 深圳 · 广州 · 香港 · 杭州 · 苏州 · 成都 · 西安 · 重庆 · 南宁 · 南京
+          - paragraph [ref=e124]: 京ICP备18035375号-1
+          - paragraph [ref=e125]: Copyright © 2026 滴普科技版权所有
+  - alert [ref=e126]

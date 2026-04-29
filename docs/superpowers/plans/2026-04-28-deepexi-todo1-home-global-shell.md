@@ -1,5 +1,9 @@
 # Deepexi TODO1 Home & Global Shell Implementation Plan
 
+Deprecated: This plan was written against the pre-rebaseline homepage assumptions.
+Deprecated: It still contains outdated interaction and section requirements that do not match the canonical 2026-04-28 live-site baseline.
+Superseded by `docs/superpowers/plans/2026-04-29-deepexi-home-rebaseline.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace the template placeholder homepage with the Deepexi Chinese homepage foundation, including the global site shell, zh-CN metadata, locale dropdown alert behavior, and visually preserved but non-interactive news entry points.
@@ -53,12 +57,78 @@ Follow-up plans should handle TODO 2 through TODO 6 after this slice lands clean
 - `npm run build`
 - browser verification on `http://localhost:3000`
 
+### Task 0: Rebaseline The Reference Inputs
+
+**Files:**
+- Modify: `docs/research/deepexi/home-reference.md`
+- Delete: `docs/design-references/deepexi-home-desktop.png`
+- Delete: `docs/design-references/deepexi-home-mobile.png`
+- Test: `docs/design-references/runtime-preview/compare-2026-04-28/original-desktop-baseline.png`
+- Test: `docs/design-references/runtime-preview/compare-2026-04-28/original-mobile-baseline.png`
+
+- [ ] **Step 1: Treat the warm-scroll baseline screenshots as the only valid original-site reference**
+
+Use these files as the canonical original-site captures:
+
+```text
+docs/design-references/runtime-preview/compare-2026-04-28/original-desktop-baseline.png
+docs/design-references/runtime-preview/compare-2026-04-28/original-mobile-baseline.png
+```
+
+Expected:
+- do not use `docs/design-references/deepexi-home-desktop.png`
+- do not use `docs/design-references/deepexi-home-mobile.png`
+- do not recreate TODO 1 against pre-baseline screenshots
+
+- [ ] **Step 2: Rewrite the homepage section assumptions to match the latest live baseline**
+
+Use this section inventory when updating `docs/research/deepexi/home-reference.md`:
+
+```text
+1. Header
+2. Hero banner
+3. DeepexiOS platform overview
+4. Three agent capability cards
+5. FastAGI product feature block
+6. Deepexi enterprise model feature block
+7. Latest news strip
+8. Footer
+```
+
+Expected:
+- remove `Product spotlight cards`
+- remove `Case/story section`
+- do not treat `聆听客户故事` / `百丽时尚` as currently visible live-page sections
+
+- [ ] **Step 3: Delete the deprecated screenshot files so later agents cannot reuse them by accident**
+
+Run:
+
+```bash
+rm -f docs/design-references/deepexi-home-desktop.png docs/design-references/deepexi-home-mobile.png
+```
+
+Expected:
+- the two deprecated files no longer exist
+- only the `runtime-preview/compare-2026-04-28/original-*-baseline.*` files are used as original-site screenshot references
+
+- [ ] **Step 4: Verify the live reference note no longer carries the deprecated screenshot or section assumptions**
+
+Run:
+
+```bash
+rg -n "deepexi-home-desktop\\.png|deepexi-home-mobile\\.png|Product spotlight cards|Case/story section" docs/research/deepexi/home-reference.md
+```
+
+Expected:
+- no matches remain
+
 ### Task 1: Capture Homepage Reference Artifacts
 
 **Files:**
 - Create: `docs/research/deepexi/home-reference.md`
-- Test: `docs/design-references/deepexi-home-desktop.png`
-- Test: `docs/design-references/deepexi-home-mobile.png`
+- Test: `docs/design-references/runtime-preview/compare-2026-04-28/original-desktop-baseline.png`
+- Test: `docs/design-references/runtime-preview/compare-2026-04-28/original-mobile-baseline.png`
 
 - [ ] **Step 1: Run homepage extraction with the existing cloning workflow**
 
@@ -88,10 +158,11 @@ Source URL: https://www.deepexi.com/
 1. Header
 2. Hero banner
 3. DeepexiOS platform overview
-4. Product spotlight cards
-5. Case/story section
-6. Latest news strip
-7. Footer
+4. Three agent capability cards
+5. FastAGI product feature block
+6. Deepexi enterprise model feature block
+7. Latest news strip
+8. Footer
 
 ## Home News Rules
 
