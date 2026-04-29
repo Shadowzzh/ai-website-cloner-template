@@ -54,11 +54,15 @@ public/
 docs/
   research/         # Inspection output (design tokens, components, layout)
   design-references/ # Screenshots and visual references
+    runtime-preview/
+      playwright-captures/ # Temporary Playwright inspection/debug screenshots only
+      compare-YYYY-MM-DD/  # Canonical original-vs-local baseline captures
 scripts/            # Asset download scripts
 ```
 
 ## MOST IMPORTANT NOTES
 - When launching Claude Code agent teams, ALWAYS have each teammate work in their own worktree branch and merge everyone's work at the end, resolving any merge conflicts smartly since you are basically serving the orchestrator role and have full context to our goals, work given, work achieved, and desired outcomes.
+- Only temporary Playwright inspection/debug screenshots should be centralized under `docs/design-references/runtime-preview/playwright-captures/`. Do not write those temporary screenshots to the repo root or the user's workspace root. This rule does not change where canonical compare baselines or other project-owned image assets belong.
 - After editing `AGENTS.md`, run `bash scripts/sync-agent-rules.sh` to regenerate platform-specific instruction files.
 - After editing `.claude/skills/clone-website/SKILL.md`, run `node scripts/sync-skills.mjs` to regenerate the skill for all platforms.
 
