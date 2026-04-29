@@ -4,6 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useState, type FocusEvent, type KeyboardEvent } from "react";
+import {
+  getDesktopNavItemClassName,
+  isHeaderMenuOpen,
+  openHeaderMenu,
+  toggleHeaderMenu,
+  type HeaderMenu,
+} from "@/components/site/header-desktop-nav";
 import { LocaleSwitch } from "@/components/site/locale-switch";
 import { MobileMenu } from "@/components/site/mobile-menu";
 import {
@@ -13,8 +20,6 @@ import {
   deepexiPrimaryNav,
 } from "@/content/site-nav";
 import type { NavColumn, SiteLinkItem } from "@/types/site";
-
-type HeaderMenu = "deepexiOs" | "about";
 
 function renderNavLink(item: SiteLinkItem, className: string) {
   if (item.kind === "route" || item.kind === "anchor") {
@@ -83,16 +88,6 @@ export function Header() {
     }
   }
 
-  function getTriggerClassName(menu: HeaderMenu) {
-    const isActive = openMenu === menu || (openMenu === null && menu === "deepexiOs");
-
-    if (isActive) {
-      return "inline-flex h-full items-center border-b-4 border-[#2d67f6] text-[15px] font-medium text-[#2d67f6]";
-    }
-
-    return "inline-flex h-full items-center border-b-4 border-transparent text-[15px] font-medium text-foreground transition-colors hover:text-[#2d67f6]";
-  }
-
   function renderDesktopPanel() {
     if (openMenu === "deepexiOs") {
       return (
@@ -156,12 +151,12 @@ export function Header() {
 
   return (
     <header
-      className="relative sticky top-0 z-[100] border-b border-[#e6edf5] bg-white"
+      className="relative sticky top-0 z-[100] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)]"
       onBlurCapture={closeIfFocusLeaves}
       onMouseLeave={() => setOpenMenu(null)}
     >
       <div className="mx-auto flex h-[66px] max-w-[1234px] items-center justify-between px-4">
-        <div className="flex items-center gap-7">
+        <div className="flex h-full items-center gap-7">
           <Link aria-label="滴普科技首页" className="block w-[182px]" href="/">
             <Image
               alt="滴普科技"
@@ -172,37 +167,40 @@ export function Header() {
             />
           </Link>
 
-          <nav aria-label="主导航" className="hidden h-full md:flex md:items-stretch md:gap-9">
-            <button
-              type="button"
-              aria-expanded={openMenu === "deepexiOs"}
-              className={getTriggerClassName("deepexiOs")}
-              onClick={() => setOpenMenu((value) => (value === "deepexiOs" ? null : "deepexiOs"))}
-              onKeyDown={(event) => handleTriggerKeyDown(event, "deepexiOs")}
-              onMouseEnter={() => setOpenMenu("deepexiOs")}
-            >
-              DeepexiOS
-            </button>
+          <nav aria-label="主导航" className="hidden h-full md:flex md:items-stretch">
+            <ul className="hidden h-full pl-4 text-[16px] md:flex">
+              <li className="relative flex h-full cursor-pointer items-center pr-5 pl-10">
+                <button
+                  type="button"
+                  aria-expanded={isHeaderMenuOpen(openMenu, "deepexiOs")}
+                  className={getDesktopNavItemClassName(isHeaderMenuOpen(openMenu, "deepexiOs"))}
+                  onClick={() => setOpenMenu((value) => toggleHeaderMenu(value, "deepexiOs"))}
+                  onKeyDown={(event) => handleTriggerKeyDown(event, "deepexiOs")}
+                  onMouseEnter={() => setOpenMenu(openHeaderMenu("deepexiOs"))}
+                >
+                  DeepexiOS
+                </button>
+              </li>
 
-            {deepexiPrimaryNav.map((item) => (
-              <div key={item.label} className="flex h-full items-center">
-                {renderNavLink(
-                  item,
-                  "inline-flex h-full items-center border-b-4 border-transparent text-[15px] font-medium text-foreground transition-colors hover:text-[#2d67f6]",
-                )}
-              </div>
-            ))}
+              {deepexiPrimaryNav.map((item) => (
+                <li key={item.label} className="relative flex h-full cursor-pointer items-center px-5">
+                  {renderNavLink(item, getDesktopNavItemClassName(false))}
+                </li>
+              ))}
 
-            <button
-              type="button"
-              aria-expanded={openMenu === "about"}
-              className={getTriggerClassName("about")}
-              onClick={() => setOpenMenu((value) => (value === "about" ? null : "about"))}
-              onKeyDown={(event) => handleTriggerKeyDown(event, "about")}
-              onMouseEnter={() => setOpenMenu("about")}
-            >
-              关于我们
-            </button>
+              <li className="relative flex h-full cursor-pointer items-center px-5">
+                <button
+                  type="button"
+                  aria-expanded={isHeaderMenuOpen(openMenu, "about")}
+                  className={getDesktopNavItemClassName(isHeaderMenuOpen(openMenu, "about"))}
+                  onClick={() => setOpenMenu((value) => toggleHeaderMenu(value, "about"))}
+                  onKeyDown={(event) => handleTriggerKeyDown(event, "about")}
+                  onMouseEnter={() => setOpenMenu(openHeaderMenu("about"))}
+                >
+                  关于我们
+                </button>
+              </li>
+            </ul>
           </nav>
         </div>
 
